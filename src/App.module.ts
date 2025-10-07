@@ -14,6 +14,7 @@ import { SalasImagensModule } from './salasImagens/salasImagens.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TasksModule } from './scheduler/tasks.module';
 import { ConfigModule } from '@nestjs/config';
+import { CodigosModule } from './codigos/codigos.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { ConfigModule } from '@nestjs/config';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    CodigosModule,
   ],
 })
 export class AppModule {}
