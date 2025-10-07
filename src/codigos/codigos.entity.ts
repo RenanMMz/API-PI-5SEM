@@ -1,4 +1,7 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Usuario } from "src/usuarios/usuarios.entity";
+
+export type TipoCodigo = 'barcode' | 'qrcode';
 
 @Entity()
 export class Codigo {
@@ -6,12 +9,18 @@ export class Codigo {
     id: number;
 
     @Column()
-    numero: string; // o número do código
+    numCodigo: string;
+
+    @ManyToOne(() => Usuario, usuario => usuario.coletas)
+    usuario: Usuario;
 
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     criadoEm: Date;
     
-    @Column()
-    tipo: string; // código de barras 'barcode' ou QR Code 'qr'
+    @Column({
+        type: 'enum',
+        enum: ['barcode','qrcode'],
+    })
+    tipo: TipoCodigo;
 
 }

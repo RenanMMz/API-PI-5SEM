@@ -10,6 +10,7 @@ import { CodigosModule } from './codigos/codigos.module';
   imports: [
     DatabaseModule,
     UsuariosModule,
+    CodigosModule,
     AuthModule,
     ScheduleModule.forRoot(),
     ConfigModule.forRoot({

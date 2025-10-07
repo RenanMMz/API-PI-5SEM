@@ -1,5 +1,6 @@
 export class CreateCodigoDTO {
-    numero: String;
+
+    numCodigo: string;
     tipo: 'barcode' | 'qrcode';
     usuarioId: number;
 }

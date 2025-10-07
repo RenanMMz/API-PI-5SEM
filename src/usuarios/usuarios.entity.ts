@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Codigo } from "src/codigos/codigos.entity";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Usuario {
@@ -8,6 +9,7 @@ export class Usuario {
     @Column()
     nome: string;
 
+    
     @Column({ unique: true })
     email: string;
 
@@ -19,5 +21,8 @@ export class Usuario {
     
     @Column()
     tipo: string;
+
+    @OneToMany(() => Codigo, codigo => codigo.usuario)
+    coletas: Codigo[];
 
 }
