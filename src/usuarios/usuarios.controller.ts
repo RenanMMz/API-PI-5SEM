@@ -1,4 +1,3 @@
-// src/usuarios/usuarios.controller.ts
 import {
   Body,
   Controller,
@@ -15,7 +14,7 @@ import { Usuario } from './usuarios.entity';
 
 @Controller('usuarios')
 export class UsuariosController {
-  constructor(private usuariosService: UsuariosService) {}
+  constructor(private usuariosService: UsuariosService) { }
 
   @Get()
   getUsuarios(): Promise<Usuario[]> {

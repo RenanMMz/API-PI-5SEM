@@ -13,8 +13,8 @@ export class AuthService {
     private jwtService: JwtService,
   ) { }
 
-  async login({ email, senha }: LoginDTO) {
-    const usuario = await this.usuariosRepository.findOne({ where: { email } });
+  async login({ nome, senha }: LoginDTO) {
+    const usuario = await this.usuariosRepository.findOne({ where: { nome } });
 
     if (!usuario) {
       throw new NotFoundException('Usuário não encontrado');
