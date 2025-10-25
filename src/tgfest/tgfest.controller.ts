@@ -2,8 +2,8 @@ import { Controller, Get } from "@nestjs/common";
 import { TGFEST } from "./tgfest.entity";
 import { TGFESTService } from "./tgfest.service";
 
-@Controller('tgfite')
-export class TGFITEController {
+@Controller('tgfest')
+export class TGFESTController {
     constructor(private tgfestService: TGFESTService) { }
 
     @Get()
