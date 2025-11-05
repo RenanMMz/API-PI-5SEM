@@ -67,7 +67,7 @@ export class CodigosService {
 
     };
 
-    async criar(createCodigoDTO: CreateCodigoDTO): Promise<Codigo> {
+    /*async criar(createCodigoDTO: CreateCodigoDTO): Promise<Codigo> {
         const { numCodigo, tipo, usuarioId } = createCodigoDTO;
 
         const usuario = await this.usuarioRepository.findOne({ where: { id: usuarioId } });
@@ -113,6 +113,6 @@ export class CodigosService {
     async remover(id: number): Promise<void> {
         const codigo = await this.buscarPorId(id);
         await this.codigoRepository.remove(codigo);
-    }
+    }*/
 
 }

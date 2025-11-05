@@ -10,11 +10,11 @@ export class CodigosController {
 
     @Post('registrar')
     async criar(
-        @Body() dto: RegistrarColetaDTO,
-        @Request() req: any
+        @Body() dto: RegistrarColetaDTO &{usuarioId: number},
     ): Promise<Codigo> {
 
-        const usuarioId = req.user.id;
+        const usuarioId = dto.usuarioId;
+        
 
         return this.codigosService.registrar({...dto, usuarioId
         });

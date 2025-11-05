@@ -6,10 +6,14 @@ import * as cookieParser from 'cookie-parser';
 import { randomUUID } from 'crypto';
 import * as dotenv from 'dotenv';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { SeedService } from './seed/seed.service';
 
 async function bootstrap() {
   dotenv.config();
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+
+  const seedService = app.get(SeedService);
+  await seedService.seedAll();
 
   const config = new DocumentBuilder()
     .setTitle('API PI 5 SEMESTRE')

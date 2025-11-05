@@ -8,6 +8,8 @@ import { CodigosModule } from './codigos/codigos.module';
 import { TGFCABModule } from './tgfcab/tgfcab.module';
 import { TGFITEModule } from './tgfite/tgfite.module';
 import { TGFESTModule } from './tgfest/tgfest.module';
+import { SeedModule } from './seed/seed.module';
+
 
 @Module({
   imports: [
@@ -23,6 +25,7 @@ import { TGFESTModule } from './tgfest/tgfest.module';
       isGlobal: true,
     }),
     CodigosModule,
+    SeedModule,
   ],
 })
 export class AppModule { }
