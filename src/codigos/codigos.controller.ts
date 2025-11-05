@@ -1,20 +1,26 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Post, Request } from '@nestjs/common';
 import { CodigosService } from './codigos.service';
 import { Codigo } from './codigos.entity';
-import { CreateCodigoDTO } from './dto/createCodigos.dto';
-import { UpdateCodigoDto } from './dto/updateCodigos.dto';
+import { RegistrarColetaDTO } from './dto/registrarColeta.dto';
 
 @Controller('codigos')
 export class CodigosController {
 
     constructor(private readonly codigosService: CodigosService) { }
 
-    @Post()
-    async criar(@Body() createCodigoDTO: CreateCodigoDTO): Promise<Codigo> {
-        return this.codigosService.criar(createCodigoDTO);
+    @Post('registrar')
+    async criar(
+        @Body() dto: RegistrarColetaDTO,
+        @Request() req: any
+    ): Promise<Codigo> {
+
+        const usuarioId = req.user.id;
+
+        return this.codigosService.registrar({...dto, usuarioId
+        });
     }
 
-    @Get()
+    /*@Get()
     async listarTodos(): Promise<Codigo[]> {
         return this.codigosService.listarTodos();
     }
@@ -35,6 +41,6 @@ export class CodigosController {
     @Delete(':id')
     async remover(@Param('id', ParseIntPipe) id: number): Promise<void> {
         return this.codigosService.remover(id);
-    }
+    }*/
 
 }

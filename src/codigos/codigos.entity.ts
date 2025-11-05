@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Usuario } from "src/usuarios/usuarios.entity";
 
 export type TipoCodigo = 'barcode' | 'qrcode';
@@ -16,11 +16,17 @@ export class Codigo {
 
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     criadoEm: Date;
-    
+
     @Column({
         type: 'enum',
-        enum: ['barcode','qrcode'],
+        enum: ['barcode', 'qrcode'],
     })
     tipo: TipoCodigo;
+
+    @Column()
+    nunota: number; // o Número Único da nota que está sendo coletada
+
+    @Column()
+    codProd: number; // código do produto que foi identificado
 
 }

@@ -7,7 +7,7 @@ export class TGFITE {
     id: number; // PK Número Único da Nota
 
     @ManyToOne(() => TGFCAB, (cab) => cab.itens) // muitos itens para um cabeçalho
-    @JoinColumn({name: 'nunota', referencedColumnName: 'nunota'}) // 
+    @JoinColumn({ name: 'nunota', referencedColumnName: 'nunota' })
     cabecalho: TGFCAB;
 
     @Column()
