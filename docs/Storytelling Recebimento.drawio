@@ -1,0 +1,127 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/28.2.8 Chrome/140.0.7339.240 Electron/38.4.0 Safari/537.36" version="28.2.8">
+  <diagram name="Página-1" id="iefKyMcP6dZ4a7NCD43V">
+    <mxGraphModel dx="744" dy="453" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="gqz1nWNt4e_j80hrnUJZ-3" value="" style="group" vertex="1" connectable="0" parent="1">
+          <mxGeometry x="410.25" y="474" width="60" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="gqz1nWNt4e_j80hrnUJZ-1" value="" style="shape=actor;whiteSpace=wrap;html=1;" vertex="1" parent="gqz1nWNt4e_j80hrnUJZ-3">
+          <mxGeometry x="10" width="40" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="gqz1nWNt4e_j80hrnUJZ-2" value="Conferente de Entrada" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" vertex="1" parent="gqz1nWNt4e_j80hrnUJZ-3">
+          <mxGeometry y="60" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="gqz1nWNt4e_j80hrnUJZ-7" value="" style="group" vertex="1" connectable="0" parent="1">
+          <mxGeometry x="662.25" y="264" width="60" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="gqz1nWNt4e_j80hrnUJZ-20" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="gqz1nWNt4e_j80hrnUJZ-7" source="gqz1nWNt4e_j80hrnUJZ-8" target="gqz1nWNt4e_j80hrnUJZ-9">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="gqz1nWNt4e_j80hrnUJZ-8" value="" style="shape=actor;whiteSpace=wrap;html=1;" vertex="1" parent="gqz1nWNt4e_j80hrnUJZ-7">
+          <mxGeometry x="10" width="40" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="gqz1nWNt4e_j80hrnUJZ-9" value="Operador de Armazenagem" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" vertex="1" parent="gqz1nWNt4e_j80hrnUJZ-7">
+          <mxGeometry y="60" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="gqz1nWNt4e_j80hrnUJZ-17" value="" style="group" vertex="1" connectable="0" parent="1">
+          <mxGeometry x="169" y="394" width="60" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="gqz1nWNt4e_j80hrnUJZ-18" value="" style="shape=actor;whiteSpace=wrap;html=1;" vertex="1" parent="gqz1nWNt4e_j80hrnUJZ-17">
+          <mxGeometry x="10" width="40" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="gqz1nWNt4e_j80hrnUJZ-19" value="Fornecedor" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" vertex="1" parent="gqz1nWNt4e_j80hrnUJZ-17">
+          <mxGeometry y="60" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="gqz1nWNt4e_j80hrnUJZ-21" value="Produtos" style="verticalLabelPosition=bottom;html=1;verticalAlign=top;align=center;shape=mxgraph.azure.cloud_service_package_file;" vertex="1" parent="1">
+          <mxGeometry x="419" y="264" width="42.5" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="gqz1nWNt4e_j80hrnUJZ-26" value="" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="229" y="394" as="sourcePoint" />
+            <mxPoint x="409" y="294" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="gqz1nWNt4e_j80hrnUJZ-27" value="entrega os" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="gqz1nWNt4e_j80hrnUJZ-26">
+          <mxGeometry x="-0.0504" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="gqz1nWNt4e_j80hrnUJZ-30" value="" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="439" y="364" as="sourcePoint" />
+            <mxPoint x="439" y="454" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="gqz1nWNt4e_j80hrnUJZ-31" value="para o" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="gqz1nWNt4e_j80hrnUJZ-30">
+          <mxGeometry x="-0.0504" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="gqz1nWNt4e_j80hrnUJZ-32" value="" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="489" y="518.29" as="sourcePoint" />
+            <mxPoint x="654" y="518.29" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="gqz1nWNt4e_j80hrnUJZ-33" value="entrega os" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="gqz1nWNt4e_j80hrnUJZ-32">
+          <mxGeometry x="-0.0504" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="gqz1nWNt4e_j80hrnUJZ-34" value="Produtos" style="verticalLabelPosition=bottom;html=1;verticalAlign=top;align=center;shape=mxgraph.azure.cloud_service_package_file;direction=east;" vertex="1" parent="1">
+          <mxGeometry x="922.75" y="484" width="42.5" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="gqz1nWNt4e_j80hrnUJZ-35" value="" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="689" y="464" as="sourcePoint" />
+            <mxPoint x="689" y="364" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="gqz1nWNt4e_j80hrnUJZ-36" value="para o" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="gqz1nWNt4e_j80hrnUJZ-35">
+          <mxGeometry x="-0.1642" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="gqz1nWNt4e_j80hrnUJZ-37" value="" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="740" y="309" as="sourcePoint" />
+            <mxPoint x="869" y="308.5" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="gqz1nWNt4e_j80hrnUJZ-38" value="realiza" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="gqz1nWNt4e_j80hrnUJZ-37">
+          <mxGeometry x="-0.181" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="gqz1nWNt4e_j80hrnUJZ-39" value="Armazenagem" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="889" y="294" width="110" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="gqz1nWNt4e_j80hrnUJZ-40" value="Produtos" style="verticalLabelPosition=bottom;html=1;verticalAlign=top;align=center;shape=mxgraph.azure.cloud_service_package_file;" vertex="1" parent="1">
+          <mxGeometry x="671" y="484" width="42.5" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="gqz1nWNt4e_j80hrnUJZ-41" value="" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="943.5" y="343" as="sourcePoint" />
+            <mxPoint x="944" y="470" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="gqz1nWNt4e_j80hrnUJZ-42" value="dos" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="gqz1nWNt4e_j80hrnUJZ-41">
+          <mxGeometry x="0.033" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="gqz1nWNt4e_j80hrnUJZ-43" value="1" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="305" y="311" width="24" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="gqz1nWNt4e_j80hrnUJZ-44" value="2" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="550" y="484" width="24" height="24" as="geometry" />
+        </mxCell>
+        <mxCell id="gqz1nWNt4e_j80hrnUJZ-45" value="3" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
+          <mxGeometry x="780" y="270" width="24" height="24" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
