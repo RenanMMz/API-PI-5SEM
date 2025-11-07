@@ -3,10 +3,11 @@ import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class TGFCAB {
+
     @PrimaryGeneratedColumn()
     id: number; // PK Número único da nota
 
-    @Column({unique: true})
+    @Column({ unique: true })
     nunota: number; // PK da negociação
 
     @Column()
@@ -21,8 +22,7 @@ export class TGFCAB {
     @Column()
     codParc: number; // Código do Parceiro
 
-    @OneToMany(() => TGFITE, (item)=> item.cabecalho) // um cabeçalho tem muitos itens
+    @OneToMany(() => TGFITE, (item) => item.cabecalho) // um cabeçalho tem muitos itens
     itens: TGFITE[];
-
 
 }

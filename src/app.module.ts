@@ -9,6 +9,7 @@ import { TGFCABModule } from './tgfcab/tgfcab.module';
 import { TGFITEModule } from './tgfite/tgfite.module';
 import { TGFESTModule } from './tgfest/tgfest.module';
 import { SeedModule } from './seed/seed.module';
+import { ErpDataModule } from './erp-data/erp-data.module';
 
 
 @Module({
@@ -26,6 +27,7 @@ import { SeedModule } from './seed/seed.module';
     }),
     CodigosModule,
     SeedModule,
+    ErpDataModule,
   ],
 })
 export class AppModule { }
