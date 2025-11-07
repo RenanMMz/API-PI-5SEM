@@ -8,39 +8,5 @@ export class CodigosController {
 
     constructor(private readonly codigosService: CodigosService) { }
 
-    @Post('registrar')
-    async criar(
-        @Body() dto: RegistrarColetaDTO &{usuarioId: number},
-    ): Promise<Codigo> {
-
-        const usuarioId = dto.usuarioId;
-        
-
-        return this.codigosService.registrar({...dto, usuarioId
-        });
-    }
-
-    /*@Get()
-    async listarTodos(): Promise<Codigo[]> {
-        return this.codigosService.listarTodos();
-    }
-
-    @Get(':id')
-    async buscarPorId(@Param('id', ParseIntPipe) id: number): Promise<Codigo> {
-        return this.codigosService.buscarPorId(id);
-    }
-
-    @Patch(':id')
-    async atualizar(
-        @Param('id', ParseIntPipe) id: number,
-        @Body() updateDto: UpdateCodigoDto,
-    ): Promise<Codigo> {
-        return this.codigosService.atualizar(id, updateDto);
-    }
-
-    @Delete(':id')
-    async remover(@Param('id', ParseIntPipe) id: number): Promise<void> {
-        return this.codigosService.remover(id);
-    }*/
 
 }

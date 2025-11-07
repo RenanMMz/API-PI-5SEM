@@ -1,5 +1,6 @@
 import { TGFITE } from "src/tgfite/tgfite.entity";
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Usuario } from "src/usuarios/usuarios.entity";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class TGFCAB {
@@ -15,6 +16,10 @@ export class TGFCAB {
 
     @Column()
     statusNota: string; // status da nota 'pendente' ou 'concluído'
+
+    @ManyToOne(() => Usuario, { nullable: true }) // Uma nota pode ser de um usuário
+    @JoinColumn({ name: 'idUsuarioColeta' }) // Chave estrangeira
+    usuarioColeta: Usuario;
 
     @Column()
     nunNota: string; // número da nota
