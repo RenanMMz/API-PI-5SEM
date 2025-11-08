@@ -4,13 +4,15 @@ import { AuthService } from './auth.service';
 import { usuariosProviders } from '../usuarios/usuarios.providers';
 import { DatabaseModule } from 'src/db/database.module';
 import { JwtModule } from '@nestjs/jwt';
+import { PassportModule } from '@nestjs/passport';
+import { JwtStrategy } from './jwt.strategy';
 
 @Module({
   imports: [JwtModule.register({
     secret: process.env.JWT_SECRET || 'EcksDee', // use env em produção
     signOptions: { expiresIn: '1h' },
-  }),DatabaseModule],
+  }),DatabaseModule, PassportModule],
   controllers: [AuthController],
-  providers: [...usuariosProviders, AuthService],
+  providers: [...usuariosProviders, AuthService, JwtStrategy],
 })
 export class AuthModule {}

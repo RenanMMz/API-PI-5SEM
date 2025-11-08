@@ -1,43 +1,31 @@
-import { Injectable, Inject, NotFoundException, UnauthorizedException } from '@nestjs/common';
-import { Repository } from "typeorm";
-import { Usuario } from '../usuarios/usuarios.entity';
-import { LoginDTO } from './dto/login.dto';
-import * as bcrypt from 'bcrypt';
-import { JwtService } from '@nestjs/jwt';
+import { Injectable } from '@nestjs/common';
+import { PassportStrategy } from '@nestjs/passport';
+import { ExtractJwt, Strategy } from 'passport-jwt';
 
+// Esta classe será usada pelo JwtAuthGuard
 @Injectable()
-export class AuthService {
-  constructor(
-    @Inject('USUARIOS_REPOSITORY')
-    private usuariosRepository: Repository<Usuario>,
-    private jwtService: JwtService,
-  ) { }
+export class JwtStrategy extends PassportStrategy(Strategy) {
+  constructor() {
+    super({
+      // 1. Onde procurar o token: No Header 'Authorization' como 'Bearer'
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      
+      // 2. Não ignora se o token expirou
+      ignoreExpiration: false,
+      
+      // 3. O SEGREDO: Deve ser o MESMO do seu auth.module.ts
+      secretOrKey: process.env.JWT_SECRET || 'EcksDee',
+    });
+  }
 
-  async login({ nome, senha }: LoginDTO) {
-    const usuario = await this.usuariosRepository.findOne({ where: { nome } });
-
-    if (!usuario) {
-      throw new NotFoundException('Usuário não encontrado');
-    }
-
-    const passwordMatches = await bcrypt.compare(senha, usuario.senha);
-
-    if (!passwordMatches) {
-      throw new UnauthorizedException('Senha incorreta');
-    }
-
-    const payload = { sub: usuario.id, tipo: usuario.tipo };
-    const token = this.jwtService.sign(payload);
-
-    return {
-      message: 'Login realizado com sucesso',
-      token,
-      usuario: {
-        id: usuario.id,
-        nome: usuario.nome,
-        email: usuario.email,
-        tipo: usuario.tipo,
-      },
-    };
+  /**
+   * Esta função é chamada DEPOIS que o token é validado com sucesso.
+   * O 'payload' é o que você colocou no `jwtService.sign(payload)` lá no AuthService.
+   */
+  async validate(payload: { sub: number; tipo: string }) {
+    
+    // O que for retornado aqui será injetado no 'req.user'
+    // pelo JwtAuthGuard em qualquer rota protegida.
+    return { id: payload.sub, tipo: payload.tipo };
   }
 }
