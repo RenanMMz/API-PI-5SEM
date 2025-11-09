@@ -42,37 +42,52 @@ export class ErpDataService {
   async atribuirProximaNota(usuarioId: number): Promise<TGFCAB> {
     this.logger.log(`Usuário ${usuarioId} solicitou a próxima nota...`);
 
-    // 1. Busca o usuário (necessário para a trava recomendada)
+    // Busca o usuário
     const usuario = await this.usuarioRepository.findOneBy({ id: usuarioId });
     if (!usuario) {
       throw new NotFoundException('Usuário não encontrado');
     }
 
-    // 2. Encontrar a próxima nota pendente (a mais antiga)
+    const notaAtiva = await this.tgfcabRepository.findOne({
+      where: {
+        statusNota: 'em_coleta',
+        usuarioColeta: { id: usuarioId }
+      },
+      relations: {
+        usuarioColeta: true 
+      }
+    });
+
+    if (notaAtiva) {
+      this.logger.log(`Usuário ${usuarioId} já possui a nota ${notaAtiva.nunota} em coleta. Retornando...`);
+      return notaAtiva;
+    }
+
+    // Encontrar a próxima nota pendente
     const proximaNota = await this.tgfcabRepository.findOne({
       where: {
         statusNota: 'pendente',
       },
       order: {
-        nunota: 'ASC', // Garante que seja a mais antiga
+        nunota: 'ASC', // A nota mais antiga
       },
     });
 
-    // 3. Se não houver notas, avise o operador
+    // Se não houver notas, avise o operador
     if (!proximaNota) {
       this.logger.log('Nenhuma nota pendente encontrada.');
       throw new NotFoundException('Nenhuma nota pendente encontrada.');
     }
 
-    // 4. "Travar" a nota: Mudar o status e associar ao usuário
+    // Mudar o status e associar ao usuário
     proximaNota.statusNota = 'em_coleta';
-    proximaNota.usuarioColeta = usuario; // <-- Passo recomendado
+    proximaNota.usuarioColeta = usuario;
     
     await this.tgfcabRepository.save(proximaNota);
 
     this.logger.log(`Nota ${proximaNota.nunota} atribuída ao usuário ${usuario.nome}.`);
 
-    // 5. Retornar a nota
+    // Retornar a nota
     return proximaNota;
   }
 }

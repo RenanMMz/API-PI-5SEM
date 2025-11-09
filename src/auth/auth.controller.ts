@@ -15,8 +15,8 @@ import { JwtService } from '@nestjs/jwt';
 @Controller('auth')
 export class AuthController {
   constructor(
-    private authService: AuthService,
-  ) {}
+    private authService: AuthService
+  ) { }
 
   @Post('login')
   async login(
