@@ -19,7 +19,7 @@ export class TGFCAB {
 
     @ManyToOne(() => Usuario, { nullable: true }) // Uma nota pode ser de um usuário
     @JoinColumn({ name: 'idUsuarioColeta' }) // Chave estrangeira
-    usuarioColeta: Usuario;
+    usuarioColeta: Usuario | null;
 
     @Column()
     nunNota: string; // número da nota
