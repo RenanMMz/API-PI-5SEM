@@ -29,4 +29,6 @@ export class Codigo {
     @Column()
     codProd: number; // código do produto que foi identificado
 
+    @Column({ default: false })
+    divergente: boolean; // indica se houve divergência na coleta
 }
