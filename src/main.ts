@@ -6,10 +6,15 @@ import * as cookieParser from 'cookie-parser';
 import { randomUUID } from 'crypto';
 import * as dotenv from 'dotenv';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { SeedService } from './seed/seed.service';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   dotenv.config();
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+
+  const seedService = app.get(SeedService);
+  await seedService.seedAll();
 
   const config = new DocumentBuilder()
     .setTitle('API PI 5 SEMESTRE')
@@ -28,6 +33,11 @@ async function bootstrap() {
   }
 
   app.useGlobalFilters(new AllExceptionsFilter());
+  app.useGlobalPipes(new ValidationPipe({
+    whitelist: true, // Remove propriedades que não estão no DTO
+    forbidNonWhitelisted: true, // Lança erro se propriedades extras forem enviadas
+    transform: true, // Transforma os dados de entrada para os tipos do DTO
+  }));
   app.use(cookieParser());
 
   app.enableCors({
