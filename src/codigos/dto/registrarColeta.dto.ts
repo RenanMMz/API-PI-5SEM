@@ -6,4 +6,6 @@ export class RegistrarColetaDTO {
 
     usuarioId: number;
 
+    confirmarDivergencia?: boolean;
+
 }

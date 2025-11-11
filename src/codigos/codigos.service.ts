@@ -8,111 +8,171 @@ import { RegistrarColetaDTO } from './dto/registrarColeta.dto';
 import { TGFEST } from 'src/tgfest/tgfest.entity';
 import { TGFITE } from 'src/tgfite/tgfite.entity';
 
+type RegistratorColetaRetorno = Codigo & { message: string; action?: 'AvisoDivergencia' | 'ReiniciarColeta' };
+
 @Injectable()
 export class CodigosService {
+  private tgfestRepository: Repository<TGFEST>;
+  private tgfiteRepository: Repository<TGFITE>;
+  private codigoRepository: Repository<Codigo>;
+  private usuarioRepository: Repository<Usuario>;
 
-    private tgfestRepository: Repository<TGFEST>;
-    private tgfiteRepository: Repository<TGFITE>;
-    private codigoRepository: Repository<Codigo>;
-    private usuarioRepository: Repository<Usuario>;
+  constructor(@Inject('DATA_SOURCE') private dataSource: DataSource) {
+    this.tgfestRepository = this.dataSource.getRepository(TGFEST);
+    this.tgfiteRepository = this.dataSource.getRepository(TGFITE);
+    this.codigoRepository = this.dataSource.getRepository(Codigo);
+    this.usuarioRepository = this.dataSource.getRepository(Usuario);
+  }
 
-    constructor(@Inject('DATA_SOURCE') private dataSource: DataSource,) {
+  /**
+   * Registra a coleta de um código de barras, controlando quantidades e divergências.
+   * Se a quantidade coletada exceder o pedido e o usuário não confirmar a divergência,
+   * a coleta é reiniciada (registros apagados e contagem volta a zero).
+   */
+  async registrar(dto: RegistrarColetaDTO): Promise<RegistratorColetaRetorno> {
+    const produto = await this.tgfestRepository.findOne({ where: { codigoBarra: dto.numCodigo } });
 
-        this.tgfestRepository = this.dataSource.getRepository(TGFEST);
-        this.tgfiteRepository = this.dataSource.getRepository(TGFITE);
-        this.codigoRepository = this.dataSource.getRepository(Codigo);
-        this.usuarioRepository = this.dataSource.getRepository(Usuario);
-
+    if (!produto) {
+      throw new NotFoundException(`Produto não encontrado, código de barras ${dto.numCodigo}`);
     }
 
-    async registrar(dto: RegistrarColetaDTO): Promise<Codigo> {
+    const codProd = produto.codProd;
 
-        const produto = await this.tgfestRepository.findOne({ where: { codigoBarra: dto.numCodigo } });
+    const itemNoPedido = await this.tgfiteRepository.findOne({
+      where: { nunota: dto.nunota, codProd },
+    });
 
-        //valida se o produto pertence à nota
-        if (!produto) {
-            throw new NotFoundException(`Produto não encontrado, código de barras ${dto.numCodigo}`);
-        }
-        const codProd = produto.codProd;
-        const itemNoPedido = await this.tgfiteRepository.findOne({
-            where: { nunota: dto.nunota, codProd: codProd }
-        });
+    if (!itemNoPedido) {
+      throw new NotFoundException(`Produto "${produto.descrProd}" não pertence a este pedido.`);
+    }
 
-        if (!itemNoPedido) {
-            throw new NotFoundException(`Produto "${produto.descrProd}" não pertence a este pedido.`);
-        }
+    const qtdPedida = itemNoPedido.qtdProd;
+    const qtdJaColetada = await this.codigoRepository.count({
+      where: { nunota: dto.nunota, codProd },
+    });
 
-        //valida quantidade
-        const qtdPedida = itemNoPedido.qtdProd;
-        const qtdJaColetada = await this.codigoRepository.count({
-            where: { nunota: dto.nunota, codProd: codProd }
-        });
-        if (qtdJaColetada >= qtdPedida) {
-            throw new BadRequestException(`Quantidade máxima do produto ${produto.descrProd} já coletada `)
-        }
+    const proximaQtdColetada = qtdJaColetada + 1;
 
-        const novoScan = this.codigoRepository.create({
-            numCodigo: dto.numCodigo,
-            tipo: dto.tipo,
-            nunota: dto.nunota, 
-            codProd: codProd,   
-        });
-
-        await this.codigoRepository.save(novoScan);
+    
+    // CASO 1: Quantidade acima do pedido
+    
+    if (proximaQtdColetada > qtdPedida) {
+      // SE o usuário NÃO confirmou a divergência
+      if (dto.confirmarDivergencia !== true) {
+        // 🔁 Reinicia a coleta (zera registros existentes)
+        await this.codigoRepository.delete({ nunota: dto.nunota, codProd });
 
         return {
-            ...novoScan,
-            message: `Coletado ${qtdJaColetada + 1} de ${qtdPedida} (${produto.descrProd})`
-        } as any
+          message: `Atenção! A quantidade coletada do produto ${produto.descrProd} excedeu o pedido. 
+A coleta foi reiniciada — por favor, recomece a coleta do produto.`,
+          action: 'ReiniciarColeta',
+        } as any;
+      }
 
-    };
+      // SE o usuário confirmou a divergência
+      const novoScan = this.codigoRepository.create({
+        numCodigo: dto.numCodigo,
+        tipo: dto.tipo,
+        nunota: dto.nunota,
+        codProd,
+        divergente: true,
+      });
 
-    /*async criar(createCodigoDTO: CreateCodigoDTO): Promise<Codigo> {
-        const { numCodigo, tipo, usuarioId } = createCodigoDTO;
+      await this.codigoRepository.save(novoScan);
 
-        const usuario = await this.usuarioRepository.findOne({ where: { id: usuarioId } });
-        if (!usuario) {
-            throw new NotFoundException(`Usuário com ID ${usuarioId} não encontrado`);
-        }
-
-        const codigo = this.codigoRepository.create({
-            numCodigo,
-            usuario,
-            tipo,
-        });
-
-        return await this.codigoRepository.save(codigo);
+      return {
+        ...novoScan,
+        message: `Divergência confirmada! Coletado ${proximaQtdColetada} de ${qtdPedida} (${produto.descrProd}).`,
+      } as any;
     }
 
-    async listarTodos(): Promise<Codigo[]> {
-        return await this.codigoRepository.find({
-            relations: ['usuario'],
-            order: { criadoEm: 'DESC' },
-        });
+    
+    // CASO 2: Quantidade igual ao pedido
+    
+    if (proximaQtdColetada === qtdPedida) {
+      const novoScan = this.codigoRepository.create({
+        numCodigo: dto.numCodigo,
+        tipo: dto.tipo,
+        nunota: dto.nunota,
+        codProd,
+      });
+
+      await this.codigoRepository.save(novoScan);
+
+      return {
+        ...novoScan,
+        message: `Coleta COMPLETA! Coletado ${proximaQtdColetada} de ${qtdPedida} (${produto.descrProd}).`,
+      } as any;
     }
 
-    async buscarPorId(id: number): Promise<Codigo> {
-        const codigo = await this.codigoRepository.findOne({
-            where: { id },
-            relations: ['usuario'],
-        });
+    
+    // CASO 3: Quantidade abaixo do pedido
+    
+    const novoScan = this.codigoRepository.create({
+      numCodigo: dto.numCodigo,
+      tipo: dto.tipo,
+      nunota: dto.nunota,
+      codProd,
+    });
 
-        if (!codigo) {
-            throw new NotFoundException(`Código com ID ${id} não encontrado`);
-        }
+    await this.codigoRepository.save(novoScan);
 
-        return codigo;
+    return {
+      ...novoScan,
+      message: `Coletado ${proximaQtdColetada} de ${qtdPedida} (${produto.descrProd}).`,
+    } as any;
+  }
+
+  
+  // Outras funções (criar, listar, buscar, atualizar, remover)
+  
+
+  async criar(createCodigoDTO: CreateCodigoDTO): Promise<Codigo> {
+    const { numCodigo, tipo, usuarioId } = createCodigoDTO;
+
+    const usuario = await this.usuarioRepository.findOne({ where: { id: usuarioId } });
+    if (!usuario) {
+      throw new NotFoundException(`Usuário com ID ${usuarioId} não encontrado`);
     }
 
-    async atualizar(id: number, updateDto: UpdateCodigoDto): Promise<Codigo> {
-        const codigo = await this.buscarPorId(id);
-        Object.assign(codigo, updateDto);
-        return await this.codigoRepository.save(codigo);
+    const codigo = this.codigoRepository.create({
+      numCodigo,
+      usuario,
+      tipo,
+    });
+
+    return await this.codigoRepository.save(codigo);
+  }
+
+  async listarTodos(): Promise<Codigo[]> {
+    return await this.codigoRepository.find({
+      relations: ['usuario'],
+      order: { criadoEm: 'DESC' },
+    });
+  }
+
+  async buscarPorId(id: number): Promise<Codigo> {
+    const codigo = await this.codigoRepository.findOne({
+      where: { id },
+      relations: ['usuario'],
+    });
+
+    if (!codigo) {
+      throw new NotFoundException(`Código com ID ${id} não encontrado`);
     }
 
-    async remover(id: number): Promise<void> {
-        const codigo = await this.buscarPorId(id);
-        await this.codigoRepository.remove(codigo);
-    }*/
+    return codigo;
+  }
+
+  async atualizar(id: number, updateDto: UpdateCodigoDto): Promise<Codigo> {
+    const codigo = await this.buscarPorId(id);
+    Object.assign(codigo, updateDto);
+    return await this.codigoRepository.save(codigo);
+  }
+
+  async remover(id: number): Promise<void> {
+    const codigo = await this.buscarPorId(id);
+    await this.codigoRepository.remove(codigo);
+  }
 
 }
