@@ -18,9 +18,8 @@ export class CodigosController {
         const usuarioId = req.user.id;
 
 
-        return this.codigosService.registrar({
-            ...dto, usuarioId
-        });
+
+        return this.codigosService.registrar(dto, usuarioId);
     }
 
 

@@ -25,7 +25,14 @@ export class CodigosService {
 
     }
 
-    async registrar(dto: RegistrarColetaDTO): Promise<Codigo> {
+    async registrar(dto: RegistrarColetaDTO, usuarioId:number): Promise<Codigo> {
+
+
+        //buscar o usuário
+        const usuario = await this.usuarioRepository.findOne({ where: { id: usuarioId } });
+        if (!usuario) {
+            throw new NotFoundException(`Usuário Coletor com ID ${usuarioId} não encontrado`);
+        }
 
         const produto = await this.tgfestRepository.findOne({ where: { codigoBarra: dto.numCodigo } });
 
@@ -55,7 +62,8 @@ export class CodigosService {
             numCodigo: dto.numCodigo,
             tipo: dto.tipo,
             nunota: dto.nunota, 
-            codProd: codProd,   
+            codProd: codProd,  
+            usuario:usuario, 
         });
 
         await this.codigoRepository.save(novoScan);

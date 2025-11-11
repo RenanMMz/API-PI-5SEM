@@ -34,7 +34,7 @@ export class ErpDataController {
   
       const usuarioId = req.user.id;
       this.logger.log(`Recebida requisição para finalizar coleta da nota ${nunota} pelo usuário ${usuarioId}`);
-      return this.erpDataService.finalizarColeta(usuarioId, nunota);
+      return this.erpDataService.finalizarColeta(nunota, usuarioId);
 
   }
 }
