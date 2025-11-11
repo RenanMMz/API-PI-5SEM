@@ -6,6 +6,8 @@ import { RegistrarColetaDTO } from './dto/registrarColeta.dto';
 import { TGFEST } from 'src/tgfest/tgfest.entity';
 import { TGFITE } from 'src/tgfite/tgfite.entity';
 
+type RegistratorColetaRetorno = Codigo & { message: string; action?: 'AvisoDivergencia' | 'ReiniciarColeta' };
+
 @Injectable()
 export class CodigosService {
 
@@ -23,8 +25,7 @@ export class CodigosService {
 
     }
 
-    async registrar(dto: RegistrarColetaDTO, usuarioId:number): Promise<Codigo> {
-
+    async registrar(dto: RegistrarColetaDTO, usuarioId: number): Promise<RegistratorColetaRetorno> {
 
         //buscar o usuário
         const usuario = await this.usuarioRepository.findOne({ where: { id: usuarioId } });
@@ -39,10 +40,11 @@ export class CodigosService {
             throw new NotFoundException(`Produto não encontrado, código de barras ${dto.numCodigo}`);
         }
         const codProd = produto.codProd;
+
+        //valida se o produto pertence à nota
         const itemNoPedido = await this.tgfiteRepository.findOne({
             where: { nunota: dto.nunota, codProd: codProd }
         });
-
         if (!itemNoPedido) {
             throw new NotFoundException(`Produto "${produto.descrProd}" não pertence a este pedido.`);
         }
@@ -52,25 +54,88 @@ export class CodigosService {
         const qtdJaColetada = await this.codigoRepository.count({
             where: { nunota: dto.nunota, codProd: codProd }
         });
-        if (qtdJaColetada >= qtdPedida) {
-            throw new BadRequestException(`Quantidade máxima do produto ${produto.descrProd} já coletada `)
+        const proximaQtdColetada = qtdJaColetada + 1;
+
+        // CASO 1: Quantidade acima do pedido
+
+        if (proximaQtdColetada > qtdPedida) {
+            // SE o usuário NÃO confirmou a divergência
+            if (dto.confirmarDivergencia !== true) {
+                // 🔁 Reinicia a coleta (zera registros existentes)
+                await this.codigoRepository.delete({ nunota: dto.nunota, codProd });
+
+                return {
+                    message: `Atenção! A quantidade coletada do produto ${produto.descrProd} excedeu o pedido. A coleta foi reiniciada — por favor, recomece a coleta do produto.`,
+                    action: 'ReiniciarColeta',
+                } as any;
+            }
+
+            // SE o usuário confirmou a divergência
+            const novoScan = this.codigoRepository.create({
+                numCodigo: dto.numCodigo,
+                tipo: dto.tipo,
+                nunota: dto.nunota,
+                codProd,
+                usuario: usuario,
+                divergente: true,
+            });
+
+            await this.codigoRepository.save(novoScan);
+
+            return {
+                ...novoScan,
+                message: `Divergência confirmada! Coletado ${proximaQtdColetada} de ${qtdPedida} (${produto.descrProd}).`,
+            } as any;
         }
+
+        // CASO 2: Quantidade igual ao pedido
+
+        if (proximaQtdColetada === qtdPedida) {
+            const novoScan = this.codigoRepository.create({
+                numCodigo: dto.numCodigo,
+                tipo: dto.tipo,
+                nunota: dto.nunota,
+                codProd,
+                usuario: usuario,
+            });
+
+            await this.codigoRepository.save(novoScan);
+
+            return {
+                ...novoScan,
+                message: `Coleta COMPLETA! Coletado ${proximaQtdColetada} de ${qtdPedida} (${produto.descrProd}).`,
+            } as any;
+        }
+
+        // CASO 3: Quantidade abaixo do pedido
 
         const novoScan = this.codigoRepository.create({
             numCodigo: dto.numCodigo,
             tipo: dto.tipo,
-            nunota: dto.nunota, 
-            codProd: codProd,  
-            usuario:usuario, 
+            nunota: dto.nunota,
+            codProd,
+            usuario: usuario,
         });
 
         await this.codigoRepository.save(novoScan);
 
         return {
             ...novoScan,
-            message: `Coletado ${qtdJaColetada + 1} de ${qtdPedida} (${produto.descrProd})`
-        } as any
+            message: `Coletado ${proximaQtdColetada} de ${qtdPedida} (${produto.descrProd}).`,
+        } as any;
 
+
+        /*if (qtdJaColetada >= qtdPedida) {
+            throw new BadRequestException(`Quantidade máxima do produto ${produto.descrProd} já coletada `)
+        }*/
+
+        /*const novoScan = this.codigoRepository.create({
+            numCodigo: dto.numCodigo,
+            tipo: dto.tipo,
+            nunota: dto.nunota,
+            codProd: codProd,
+            usuario: usuario,
+        });*/
     };
 
     /*async criar(createCodigoDTO: CreateCodigoDTO): Promise<Codigo> {

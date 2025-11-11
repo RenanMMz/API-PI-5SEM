@@ -1,4 +1,4 @@
-import { IsEnum, IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { IsEnum, IsNotEmpty, IsNumber, IsString, IsBoolean } from "class-validator";
 
 export class RegistrarColetaDTO {
 
@@ -13,5 +13,8 @@ export class RegistrarColetaDTO {
     @IsNumber()
     @IsNotEmpty({ message: 'O nunota (ID da nota) é obrigatório' })
     nunota: number;
+
+    @IsBoolean()
+    confirmarDivergencia?: boolean;
 
 }
