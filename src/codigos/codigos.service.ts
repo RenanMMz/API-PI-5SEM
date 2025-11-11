@@ -2,8 +2,6 @@ import { BadRequestException, Inject, Injectable, NotFoundException } from '@nes
 import { Usuario } from 'src/usuarios/usuarios.entity';
 import { DataSource, Repository } from 'typeorm';
 import { Codigo } from './codigos.entity';
-import { CreateCodigoDTO } from './dto/createCodigos.dto';
-import { UpdateCodigoDto } from './dto/updateCodigos.dto';
 import { RegistrarColetaDTO } from './dto/registrarColeta.dto';
 import { TGFEST } from 'src/tgfest/tgfest.entity';
 import { TGFITE } from 'src/tgfite/tgfite.entity';
@@ -34,9 +32,9 @@ export class CodigosService {
             throw new NotFoundException(`Usuário Coletor com ID ${usuarioId} não encontrado`);
         }
 
+        //valida se o produto pertence à nota
         const produto = await this.tgfestRepository.findOne({ where: { codigoBarra: dto.numCodigo } });
 
-        //valida se o produto pertence à nota
         if (!produto) {
             throw new NotFoundException(`Produto não encontrado, código de barras ${dto.numCodigo}`);
         }
