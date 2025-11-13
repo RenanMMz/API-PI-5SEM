@@ -1,27 +1,27 @@
-import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { Usuario } from 'src/usuarios/usuarios.entity';
-import { DataSource, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Codigo } from './codigos.entity';
 import { RegistrarColetaDTO } from './dto/registrarColeta.dto';
 import { TGFEST } from 'src/tgfest/tgfest.entity';
 import { TGFITE } from 'src/tgfite/tgfite.entity';
+import { InjectRepository } from '@nestjs/typeorm';
 
 type RegistratorColetaRetorno = Codigo & { message: string; action?: 'AvisoDivergencia' | 'ReiniciarColeta' };
 
 @Injectable()
 export class CodigosService {
 
-    private tgfestRepository: Repository<TGFEST>;
-    private tgfiteRepository: Repository<TGFITE>;
-    private codigoRepository: Repository<Codigo>;
-    private usuarioRepository: Repository<Usuario>;
+    constructor(
 
-    constructor(@Inject('DATA_SOURCE') private dataSource: DataSource,) {
+        @InjectRepository(TGFEST) private tgfestRepository: Repository<TGFEST>,
+        @InjectRepository(TGFITE) private tgfiteRepository: Repository<TGFITE>,
+        @InjectRepository(Codigo) private codigoRepository: Repository<Codigo>,
+        @InjectRepository(Usuario) private usuarioRepository: Repository<Usuario>, // Injeção direta
 
-        this.tgfestRepository = this.dataSource.getRepository(TGFEST);
-        this.tgfiteRepository = this.dataSource.getRepository(TGFITE);
-        this.codigoRepository = this.dataSource.getRepository(Codigo);
-        this.usuarioRepository = this.dataSource.getRepository(Usuario);
+    ) {
+
+
 
     }
 

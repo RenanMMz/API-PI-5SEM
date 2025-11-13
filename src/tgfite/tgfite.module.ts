@@ -1,14 +1,14 @@
 import { Module } from "@nestjs/common";
-import { DatabaseModule } from "src/db/database.module";
 import { TGFITEController } from "./tgfite.controller";
-import { tgfiteProviders } from "./tgfite.providers";
 import { TGFITEService } from "./tgfite.service";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { TGFITE } from "./tgfite.entity";
 
 @Module({
     controllers: [TGFITEController],
-    imports: [DatabaseModule],
-    providers: [...tgfiteProviders, TGFITEService],
-    exports: [...tgfiteProviders, TGFITEService],
+    imports: [TypeOrmModule.forFeature([TGFITE])],
+    providers: [TGFITEService],
+    exports: [TGFITEService, TypeOrmModule.forFeature([TGFITE])],
 })
 
 export class TGFITEModule { };
