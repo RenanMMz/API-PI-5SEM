@@ -6,6 +6,7 @@ import { TGFDOCA } from 'src/tgfdoca/tgfdoca.entity';
 import { TGFCAB } from 'src/tgfcab/tgfcab.entity';
 import { TGFITE } from 'src/tgfite/tgfite.entity';
 import { TGFEST } from 'src/tgfest/tgfest.entity';
+import { TGFREC } from 'src/tgfrec/tgfrec.entity';
 import { Usuario } from 'src/usuarios/usuarios.entity';
 import { Codigo } from 'src/codigos/codigos.entity';
 
@@ -17,6 +18,7 @@ export class SeedService {
 
   private readonly logger = new Logger(SeedService.name);
 
+  private tgfrecRepository: Repository<TGFREC>;
   private tgfdocaRepository: Repository<TGFDOCA>;
   private tgfcabRepository: Repository<TGFCAB>;
   private tgfiteRepository: Repository<TGFITE>;
@@ -25,6 +27,7 @@ export class SeedService {
   private codigoRepository: Repository<Codigo>;
 
   constructor(@Inject('DATA_SOURCE') private dataSource: DataSource) {
+    this.tgfrecRepository = this.dataSource.getRepository(TGFREC);
     this.tgfdocaRepository = this.dataSource.getRepository(TGFDOCA);
     this.tgfcabRepository = this.dataSource.getRepository(TGFCAB);
     this.tgfiteRepository = this.dataSource.getRepository(TGFITE);
@@ -48,6 +51,8 @@ export class SeedService {
   async clearData() {
     this.logger.log('Limpando tabelas...');
     // A ordem importa devido a FKs
+    await this.tgfrecRepository.delete({});
+    await this.tgfdocaRepository.delete({});
     await this.codigoRepository.delete({});
     await this.tgfiteRepository.delete({});
     await this.tgfcabRepository.delete({});
@@ -152,7 +157,7 @@ export class SeedService {
         descrDoca: 'DOCA PRINCIPAL - RECEBIMENTO',
       });
       await this.tgfdocaRepository.save(doca);
-      console.log('Doca de teste inserida.');
+      this.logger.log('Doca de teste inserida.');
     }
   }
 
