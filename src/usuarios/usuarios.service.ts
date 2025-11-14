@@ -9,11 +9,12 @@ import {
 import { Repository } from 'typeorm';
 import { Usuario } from './usuarios.entity';
 import { createUserDTO } from './dto/usuarios.dto';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class UsuariosService {
   constructor(
-    @Inject('USUARIOS_REPOSITORY')
+    @InjectRepository(Usuario)
     private usuariosRepository: Repository<Usuario>,
   ) { }
 

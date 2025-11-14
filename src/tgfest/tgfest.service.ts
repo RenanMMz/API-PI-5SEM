@@ -1,12 +1,13 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { Repository } from "typeorm";
 import { TGFEST } from "./tgfest.entity";
+import { InjectRepository } from "@nestjs/typeorm";
 
 @Injectable()
 export class TGFESTService {
     constructor(
-        @Inject('TGFEST_REPOSITORY')
-        private tgfestRepo: Repository<TGFEST>
+        @InjectRepository(TGFEST)
+        private readonly tgfestRepo: Repository<TGFEST>
     ) { }
 
     async getItens() {

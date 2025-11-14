@@ -1,14 +1,14 @@
 import { Module } from "@nestjs/common";
-import { DatabaseModule } from "src/db/database.module";
 import { TGFCABController } from "./tgfcab.controller";
-import { tgfcabProviders } from "./tgfcab.providers";
 import { TGFCABService } from "./tgfcab.service";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { TGFCAB } from "./tgfcab.entity";
 
 @Module({
     controllers: [TGFCABController],
-    imports: [DatabaseModule],
-    providers: [...tgfcabProviders, TGFCABService],
-    exports: [...tgfcabProviders, TGFCABService],
+    imports: [TypeOrmModule.forFeature([TGFCAB])],
+    providers: [TGFCABService],
+    exports: [TGFCABService, TypeOrmModule.forFeature([TGFCAB])],
 })
 
 export class TGFCABModule { };

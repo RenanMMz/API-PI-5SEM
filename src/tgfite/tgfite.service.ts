@@ -1,12 +1,13 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { Repository } from "typeorm";
 import { TGFITE } from "./tgfite.entity";
+import { InjectRepository } from "@nestjs/typeorm";
 
 @Injectable()
 export class TGFITEService {
     constructor(
-        @Inject('TGFITE_REPOSITORY')
-        private tgfiteRepo: Repository<TGFITE>
+        @InjectRepository(TGFITE)
+        private readonly tgfiteRepository: Repository<TGFITE>
     ) { }
 
     async getItens() {
