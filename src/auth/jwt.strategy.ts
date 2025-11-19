@@ -22,10 +22,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
    * Esta função é chamada DEPOIS que o token é validado com sucesso.
    * O 'payload' é o que você colocou no `jwtService.sign(payload)` lá no AuthService.
    */
-  async validate(payload: { sub: number; tipo: string }) {
+  async validate(payload: { sub: number }) {
     
     // O que for retornado aqui será injetado no 'req.user'
     // pelo JwtAuthGuard em qualquer rota protegida.
-    return { id: payload.sub, tipo: payload.tipo };
+    return { id: payload.sub };
   }
 }

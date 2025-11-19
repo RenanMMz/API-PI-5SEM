@@ -14,8 +14,8 @@ export class AuthService {
     private jwtService: JwtService,
   ) { }
 
-  async login({ nome, senha }: LoginDTO) {
-    const usuario = await this.usuariosRepository.findOne({ where: { nome } });
+  async login({ email, senha }: LoginDTO) {
+    const usuario = await this.usuariosRepository.findOne({ where: { email } });
 
     if (!usuario) {
       throw new NotFoundException('Usuário não encontrado');
@@ -27,7 +27,7 @@ export class AuthService {
       throw new UnauthorizedException('Senha incorreta');
     }
 
-    const payload = { sub: usuario.id, tipo: usuario.tipo };
+    const payload = { sub: usuario.id };
     const token = this.jwtService.sign(payload);
 
     return {
@@ -35,9 +35,7 @@ export class AuthService {
       token,
       usuario: {
         id: usuario.id,
-        nome: usuario.nome,
         email: usuario.email,
-        tipo: usuario.tipo,
       },
     };
   }

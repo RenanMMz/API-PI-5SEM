@@ -28,8 +28,8 @@ export class UsuariosService {
   }
 
   async createUsuarios(createUserDTO: createUserDTO) {
-    if (!createUserDTO.email || !createUserDTO.senha || !createUserDTO.tipo) {
-      throw new BadRequestException('Email, senha e tipo são obrigatórios');
+    if (!createUserDTO.email || !createUserDTO.senha) {
+      throw new BadRequestException('Email e senha são obrigatórios');
     }
 
     try {

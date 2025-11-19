@@ -3,16 +3,8 @@ import { UsuariosModule } from './usuarios/usuarios.module';
 import { AuthModule } from './auth/auth.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { CodigosModule } from './codigos/codigos.module';
-import { TGFCABModule } from './tgfcab/tgfcab.module';
-import { TGFITEModule } from './tgfite/tgfite.module';
-import { TGFESTModule } from './tgfest/tgfest.module';
-import { SeedModule } from './seed/seed.module';
-import { ErpDataModule } from './erp-data/erp-data.module';
-import { TgfdocaModule } from './tgfdoca/tgfdoca.module';
-import { RecebimentoModule } from './recebimento/recebimento.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { config } from 'process';
+import { VaultDataModule } from './vaultData/vaultData.module';
 
 
 @Module({
@@ -38,16 +30,10 @@ import { config } from 'process';
       })
     }),
     UsuariosModule,
-    CodigosModule,
+    VaultDataModule,
     AuthModule,
-    TGFCABModule,
-    TGFITEModule,
-    TGFESTModule,
-    RecebimentoModule,
     ScheduleModule.forRoot(),
-    SeedModule,
-    ErpDataModule,
-    TgfdocaModule,
+
   ],
 })
 export class AppModule { }
