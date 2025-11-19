@@ -1,12 +1,13 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { UsuariosModule } from './usuarios/usuarios.module';
 import { AuthModule } from './auth/auth.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { VaultDataModule } from './vaultData/vaultData.module';
+import { DataSource } from 'typeorm';
 
-
+@Global()
 @Module({
   imports: [
     //precisa ficar no topo, o typeormmodule depende do configmodule
@@ -35,5 +36,6 @@ import { VaultDataModule } from './vaultData/vaultData.module';
     ScheduleModule.forRoot(),
 
   ],
+
 })
 export class AppModule { }

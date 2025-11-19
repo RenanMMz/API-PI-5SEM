@@ -3,15 +3,15 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { VaultDataService } from "./vaultData.service";
 import { VaultDataController } from "./vaultData.controller";
 import { VaultData } from "./vaultData.entity";
-import { UsuariosModule } from "src/usuarios/usuarios.module";
+import { Usuario } from "src/usuarios/usuarios.entity";
+import { DataSource } from "typeorm";
 
 @Module({
     controllers: [VaultDataController],
     imports: [
-        TypeOrmModule.forFeature([VaultData]),
-        UsuariosModule,
+        TypeOrmModule.forFeature([VaultData, Usuario]),
     ],
-    providers: [VaultDataService],
+    providers: [VaultDataService, {provide: DataSource, useExisting: DataSource}],
     exports: [VaultDataService, TypeOrmModule.forFeature([VaultData])],
 })
 

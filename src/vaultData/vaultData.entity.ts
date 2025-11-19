@@ -18,7 +18,7 @@ export class VaultData {
     vaultIV: string;
 
     @Column()
-    tag: string;
+    vaultTag: string;
 
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     criadoEm: Date;

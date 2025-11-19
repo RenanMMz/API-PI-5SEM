@@ -9,7 +9,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { UsuariosService } from './usuarios.service';
-import { createUserDTO } from './dto/usuarios.dto';
+import { CreateUserDTO } from './dto/usuarios.dto';
 import { Usuario } from './usuarios.entity';
 
 @Controller('usuarios')
@@ -33,14 +33,14 @@ export class UsuariosController {
   }
 
   @Post('/create')
-  createUsuarios(@Body() createUserDTO: createUserDTO) {
+  createUsuarios(@Body() createUserDTO: CreateUserDTO) {
     return this.usuariosService.createUsuarios(createUserDTO);
   }
 
   @Put('/:id')
   updateUsuarios(
     @Param('id', ParseIntPipe) id: number,
-    @Body() updateData: Partial<createUserDTO>,
+    @Body() updateData: Partial<CreateUserDTO>,
   ): Promise<Usuario> {
     return this.usuariosService.updateUsuarios(id, updateData);
   }

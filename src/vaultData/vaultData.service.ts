@@ -6,7 +6,7 @@ import {
     ConflictException,
     BadRequestException,
 } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { VaultData } from './vaultData.entity';
 import { createVaultDataDTO } from './dto/createVaultData.dto';
@@ -19,34 +19,63 @@ export class VaultDataService {
         private vaultDataRepository: Repository<VaultData>,
         @InjectRepository(Usuario)
         private usuariosRepository: Repository<Usuario>,
+        private dataSource: DataSource,
     ) { }
 
-    async createVaultData(userId: number, createVaultDataDTO: createVaultDataDTO) {
-        //Validação de user
-        const usuario = await this.usuariosRepository.findOne({ where: { id: userId } });
-        if (!usuario) {
-            throw new BadRequestException('Usuário não encontrado');
+    async getVaultDataByUserId(userId: number): Promise<VaultData | null> {
+        return await this.vaultDataRepository.findOne({
+            where: { usuario: { id: userId } }
+        });
+    }
+
+    async updateVaultData(
+        userId: number,
+        updateData: Partial<createVaultDataDTO>,
+    ): Promise<void> {
+        // VaultData do usuário
+        const vaultData = await this.vaultDataRepository.findOne({
+            where: { usuario: { id: userId } }
+        });
+
+        if (!vaultData) {
+            throw new NotFoundException('VaultData não encontrado para o usuário.');
         }
 
-        //validação de "se esse user já tem um vaultData"
-        const existingVault = await this.vaultDataRepository.findOne ({ where: { usuario:{ id: userId }}});
-        if (existingVault){
-            throw new BadRequestException('Usuário já possui um vaultData')
-        }
-        
+        // Atualiza apenas os campos permitidos
+        vaultData.encryptedBlob = updateData.encryptedBlob || vaultData.encryptedBlob;
+        vaultData.vaultIV = updateData.vaultIV || vaultData.vaultIV;
+        vaultData.vaultTag = updateData.vaultTag || vaultData.vaultTag;
+
+        await this.vaultDataRepository.save(vaultData);
+    }
+
+    async deleteAccountAndVault(userId: number): Promise<void> {
+        const queryRunner = this.dataSource.createQueryRunner();
+        await queryRunner.connect();
+        await queryRunner.startTransaction();
+
         try {
-            const vaultData = this.vaultDataRepository.create({
+            // Deleta o VaultData, cascade: true no delete de usuário serve mas para segurança estou deletando aqui também
+            const vaultResult = await queryRunner.manager.delete(VaultData, { usuario: { id: userId } });
 
-                ...createVaultDataDTO,
-                usuario: usuario,
-                criadoEm: new Date(),
+            // Deleta o usuário
+            const userResult = await queryRunner.manager.delete(Usuario, userId);
 
-            });
+            if (userResult.affected === 0) {
+                throw new NotFoundException('Usuário não encontrado para deleção.');
+            }
 
-            return await this.vaultDataRepository.save(vaultData);;
+            await queryRunner.commitTransaction();
+
         } catch (error) {
-            console.error(error);
-            throw new BadRequestException('Erro ao criar VaultData');
+            await queryRunner.rollbackTransaction();
+            console.error('Erro ao deletar conta e Vault:', error);
+            if (error instanceof NotFoundException) {
+                throw error;
+            }
+            throw new BadRequestException('Erro ao deletar conta.');
+        } finally {
+            await queryRunner.release();
         }
     }
 }
