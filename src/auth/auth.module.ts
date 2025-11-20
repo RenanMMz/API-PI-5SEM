@@ -17,7 +17,7 @@ import { UsuariosModule } from 'src/usuarios/usuarios.module';
     PassportModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET || 'EcksDee', // use env em produção
-      signOptions: { expiresIn: '1h' }
+      signOptions: { expiresIn: '300s' }
     }),
   ],
   controllers: [AuthController],

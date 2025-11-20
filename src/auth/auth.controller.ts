@@ -9,12 +9,14 @@ import {
   NotFoundException,
   BadRequestException,
   Query,
+  Param,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDTO } from './dto/login.dto';
 import { Response, Request } from 'express';
 import { JwtService } from '@nestjs/jwt';
 import { UsuariosService } from 'src/usuarios/usuarios.service';
+import { JwtAuthGuard } from './jwt-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -24,8 +26,8 @@ export class AuthController {
   ) { }
 
   // get da chave pública (kdfSalt) do usuário pelo email
-  @Get('kdfsalt')
-  async getKdfSaltByEmail(@Query('email') email: string) {
+  @Get('kdfsalt/:email')
+  async getKdfSaltByEmail(@Param('email') email: string) {
     if (!email) {
       throw new BadRequestException('O parâmetro email é obrigatório.');
     }
@@ -55,4 +57,20 @@ export class AuthController {
       usuario: result.usuario,
     };
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('refresh')
+  async refreshToken(@Req() req) {
+    const userId = req.user.id;
+
+    const newToken = await this.authService.generateAccessToken(userId);
+    return {
+      message: 'Token de acesso refreshado com sucesso',
+      accessToken: newToken,
+    };
+
+  }
+
+
+
 }
