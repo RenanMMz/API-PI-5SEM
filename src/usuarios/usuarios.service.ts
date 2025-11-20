@@ -48,9 +48,10 @@ export class UsuariosService {
     await queryRunner.startTransaction();
 
     try {
+      const hashedPassword = await bcrypt.hash(createUserDTO.senha, 10);
       const newUsuario = queryRunner.manager.create(Usuario, {
         email: createUserDTO.email,
-        senha: createUserDTO.senha,
+        senha: hashedPassword,
         kdfSalt: createUserDTO.kdfSalt,
         criadoEm: new Date(),
       });
