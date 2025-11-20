@@ -6,7 +6,6 @@ import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { VaultData } from 'src/vaultData/vaultData.entity';
-import { encrypt } from 'src/utils/crypto.util';
 
 @Injectable()
 export class AuthService {
@@ -17,6 +16,14 @@ export class AuthService {
     private vaultDataRepository: Repository<VaultData>,
     private jwtService: JwtService,
   ) { }
+
+  async generateAccessToken (userId:number):Promise<string>{
+
+    const payload = { sub: userId }
+    const token = this.jwtService.sign(payload);
+    return token;
+
+  }
 
   async login({ email, senha }: LoginDTO) {
     //usuário
@@ -40,8 +47,7 @@ export class AuthService {
     }
 
     //token jwt
-    const payload = { sub: usuario.id };
-    const token = this.jwtService.sign(payload);
+    const token = await this.generateAccessToken(usuario.id);
     return {
       message: 'Login realizado com sucesso',
       token,
