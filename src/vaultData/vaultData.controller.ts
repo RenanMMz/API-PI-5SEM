@@ -38,7 +38,6 @@ export class VaultDataController {
     };
   }
 
-
   //update de senhas (O cliente envia o novo blob criptografado)
   @Put()
   async updateVaultData(

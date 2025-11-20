@@ -11,7 +11,7 @@ import { DataSource } from "typeorm";
     imports: [
         TypeOrmModule.forFeature([VaultData, Usuario]),
     ],
-    providers: [VaultDataService, {provide: DataSource, useExisting: DataSource}],
+    providers: [VaultDataService],
     exports: [VaultDataService, TypeOrmModule.forFeature([VaultData])],
 })
 

@@ -1,13 +1,11 @@
-import * as bcrypt from 'bcrypt';
 import {
-    Inject,
     Injectable,
     NotFoundException,
     ConflictException,
     BadRequestException,
 } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { VaultData } from './vaultData.entity';
 import { createVaultDataDTO } from './dto/createVaultData.dto';
 import { Usuario } from 'src/usuarios/usuarios.entity';
@@ -19,6 +17,7 @@ export class VaultDataService {
         private vaultDataRepository: Repository<VaultData>,
         @InjectRepository(Usuario)
         private usuariosRepository: Repository<Usuario>,
+        @InjectDataSource()
         private dataSource: DataSource,
     ) { }
 

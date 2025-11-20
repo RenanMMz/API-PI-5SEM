@@ -7,13 +7,21 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './jwt.strategy';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Usuario } from 'src/usuarios/usuarios.entity';
+import { VaultData } from 'src/vaultData/vaultData.entity';
+import { UsuariosModule } from 'src/usuarios/usuarios.module';
 
 @Module({
-  imports: [JwtModule.register({
-    secret: process.env.JWT_SECRET || 'EcksDee', // use env em produção
-    signOptions: { expiresIn: '1h' },
-  }),TypeOrmModule.forFeature([Usuario]), PassportModule],
+  imports: [
+    UsuariosModule,
+    TypeOrmModule.forFeature([Usuario, VaultData]),
+    PassportModule,
+    JwtModule.register({
+      secret: process.env.JWT_SECRET || 'EcksDee', // use env em produção
+      signOptions: { expiresIn: '1h' }
+    }),
+  ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy],
+  exports: [AuthService, JwtModule, PassportModule]
 })
-export class AuthModule {}
+export class AuthModule { }
