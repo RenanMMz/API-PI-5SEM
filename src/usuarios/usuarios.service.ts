@@ -6,52 +6,85 @@ import {
   ConflictException,
   BadRequestException,
 } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { Usuario } from './usuarios.entity';
-import { createUserDTO } from './dto/usuarios.dto';
-import { InjectRepository } from '@nestjs/typeorm';
+import { CreateUserDTO } from './dto/usuarios.dto';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { VaultData } from 'src/vaultData/vaultData.entity';
 
 @Injectable()
 export class UsuariosService {
+
   constructor(
     @InjectRepository(Usuario)
     private usuariosRepository: Repository<Usuario>,
+    @InjectDataSource()
+    private dataSource: DataSource,
   ) { }
 
   async getUsuarios(): Promise<Usuario[]> {
     return await this.usuariosRepository.find();
   }
 
+  async getUsuarioByEmail(email: string): Promise<Usuario | null> {
+    return await this.usuariosRepository.findOne({ where: { email } });
+  }
+
+
   async getUsuarioById(id: number): Promise<Usuario | null> {
     const usuario = await this.usuariosRepository.findOne({ where: { id } });
     return usuario || null;
   }
 
-  async createUsuarios(createUserDTO: createUserDTO) {
-    if (!createUserDTO.email || !createUserDTO.senha || !createUserDTO.tipo) {
-      throw new BadRequestException('Email, senha e tipo são obrigatórios');
+  async createUsuarios(createUserDTO: CreateUserDTO) {
+
+    const existingUser = await this.usuariosRepository.findOne({ where: { email: createUserDTO.email } });
+    if (existingUser) {
+      throw new ConflictException('O e-mail informado já está em uso');
     }
 
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
     try {
-      const hashedPassword = await bcrypt.hash(createUserDTO.senha, 10);
-      const usuario = this.usuariosRepository.create({
-        ...createUserDTO,
-        senha: hashedPassword,
+      const newUsuario = queryRunner.manager.create(Usuario, {
+        email: createUserDTO.email,
+        senha: createUserDTO.senha,
+        kdfSalt: createUserDTO.kdfSalt,
         criadoEm: new Date(),
       });
-      return await this.usuariosRepository.save(usuario);
+      await queryRunner.manager.save(newUsuario);
+
+      const newVaultData = queryRunner.manager.create(VaultData, {
+        usuario: newUsuario, // Vincula o Vault ao novo usuário
+        encryptedBlob: createUserDTO.encryptedBlob,
+        vaultIV: createUserDTO.vaultIV,
+        vaultTag: createUserDTO.vaultTag,
+        criadoEm: new Date(),
+      });
+      await queryRunner.manager.save(newVaultData);
+      await queryRunner.commitTransaction();
+
+      return {
+        id: newUsuario.id,
+        email: newUsuario.email,
+        message: 'Usuário e Vault criados com sucesso',
+      };
+
+
     } catch (error) {
-      if (error.code === 'ER_DUP_ENTRY' || error.code === '23505') {
-        throw new ConflictException('O e-mail informado já está em uso');
-      }
-      console.error(error);
-      throw new BadRequestException('Erro ao criar usuário');
+      await queryRunner.rollbackTransaction();
+      console.error('Erro ao criar usuário e Vault:', error);
+      throw new BadRequestException('Erro no servidor ao finalizar o registro.');
+    } finally {
+      await queryRunner.release();
     }
   }
 
   async updateUsuarios(
     id: number,
-    updateData: Partial<createUserDTO>,
+    updateData: Partial<CreateUserDTO>,
   ): Promise<Usuario> {
     const usuario = await this.usuariosRepository.findOne({ where: { id } });
 

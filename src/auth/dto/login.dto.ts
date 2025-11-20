@@ -4,7 +4,7 @@ export class LoginDTO {
 
     @IsString()
     @IsNotEmpty({ message: 'O campo nome é obrigatório' })
-    nome: string;
+    email: string;
 
     @IsString()
     @IsNotEmpty({ message: 'O campo senha é obrigatório' })
