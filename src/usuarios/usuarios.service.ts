@@ -10,7 +10,7 @@ import { DataSource, Repository } from 'typeorm';
 import { Usuario } from './usuarios.entity';
 import { CreateUserDTO } from './dto/usuarios.dto';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
-import { VaultData } from 'src/vaultData/vaultData.entity';
+import { VaultData } from '../vaultData/vaultData.entity';
 
 @Injectable()
 export class UsuariosService {

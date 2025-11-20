@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsuariosController } from '../usuarios.controller';
 import { UsuariosService } from '../usuarios.service';
-import { createUserDTO } from '../dto/usuarios.dto';
+import { CreateUserDTO } from '../dto/usuarios.dto';
 import { Usuario } from '../usuarios.entity';
 
 describe('UsuariosController', () => {
@@ -41,7 +41,7 @@ describe('UsuariosController', () => {
                 reservas: [],
                 cartoes: [],
 
-            },
+            } as any,
         ];
         mockUsuariosService.getUsuarios.mockResolvedValue(usuarios);
         const result = await controller.getUsuarios();
@@ -49,12 +49,12 @@ describe('UsuariosController', () => {
     });
 
     it('deve criar um novo usuário', async () => {
-        const dto: createUserDTO = {
+        const dto: CreateUserDTO = {
             nome: 'Novo Usuário',
             email: 'novo@exemplo.com',
             senha: '123456',
             tipo: 'user',
-        };
+        } as any; //verificar necessidade do "as any"
 
         const usuarioCriado: Usuario = {
             id: 2,
@@ -63,7 +63,7 @@ describe('UsuariosController', () => {
             criadoEm: new Date(),
             reservas: [],
             cartoes: [],
-        };
+        }as any; //verificar necessidade do "as any"
 
         mockUsuariosService.createUsuarios.mockResolvedValue(usuarioCriado);
         const result = await controller.createUsuarios(dto);
@@ -82,7 +82,7 @@ describe('UsuariosController', () => {
             reservas: [],
             cartoes: [],
 
-        };
+        } as any; //verificar necessidade do "as any"
 
         mockUsuariosService.updateUsuarios.mockResolvedValue(usuarioAtualizado);
         const result = await controller.updateUsuarios(1, updateData);
