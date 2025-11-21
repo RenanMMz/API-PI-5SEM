@@ -55,6 +55,7 @@ export class AuthController {
       message: 'Login realizado com sucesso',
       access_token: result.token,
       usuario: result.usuario,
+      vaultData: result.vaultData,
     };
   }
 
@@ -62,7 +63,6 @@ export class AuthController {
   @Post('refresh')
   async refreshToken(@Req() req) {
     const userId = req.user.id;
-
     const newToken = await this.authService.generateAccessToken(userId);
     return {
       message: 'Token de acesso refreshado com sucesso',
