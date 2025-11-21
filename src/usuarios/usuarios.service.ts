@@ -11,6 +11,7 @@ import { Usuario } from './usuarios.entity';
 import { CreateUserDTO } from './dto/usuarios.dto';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { VaultData } from 'src/vaultData/vaultData.entity';
+import { UpdateUserDTO } from './dto/updateUsuarios.dto';
 
 @Injectable()
 export class UsuariosService {
@@ -48,9 +49,10 @@ export class UsuariosService {
     await queryRunner.startTransaction();
 
     try {
+      const hashedPassword = await bcrypt.hash(createUserDTO.senha, 10);
       const newUsuario = queryRunner.manager.create(Usuario, {
         email: createUserDTO.email,
-        senha: createUserDTO.senha,
+        senha: hashedPassword,
         kdfSalt: createUserDTO.kdfSalt,
         criadoEm: new Date(),
       });
@@ -82,21 +84,52 @@ export class UsuariosService {
     }
   }
 
-  async updateUsuarios(
-    id: number,
-    updateData: Partial<CreateUserDTO>,
-  ): Promise<Usuario> {
-    const usuario = await this.usuariosRepository.findOne({ where: { id } });
+  async updateUser(
+    userId: number,
+    updateData: UpdateUserDTO,
+  ): Promise<void> {
 
-    if (!usuario) {
-      throw new NotFoundException('Usuário não encontrado');
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      //update usuário
+      const usuario = await queryRunner.manager.findOne(Usuario, { where: { id: userId } })
+      if (!usuario) {
+        throw new NotFoundException('Usuário não encontrado.');
+      }
+
+      const hashedPassword = await bcrypt.hash(updateData.novaSenha, 10);
+
+      usuario.senha = hashedPassword;
+      usuario.kdfSalt = updateData.novoKdfSalt;
+      await queryRunner.manager.save(usuario);
+
+      //update vaultData
+      const vaultData = await queryRunner.manager.findOne(VaultData, { where: { usuario: { id: userId } } });
+      if (!vaultData) {
+        throw new NotFoundException('VaultData não encontrado.');
+      }
+      vaultData.encryptedBlob = updateData.novoEncryptedBlob;
+      vaultData.vaultIV = updateData.novoVaultIV;
+      vaultData.vaultTag = updateData.novoVaultTag;
+      await queryRunner.manager.save(vaultData);
+
+      await queryRunner.commitTransaction();
+
+    } catch (error){
+      //rollback
+      await queryRunner.rollbackTransaction()
+      console.error ('erro na transação de atualização de senha ou vaultData', error);
+
+      if (error instanceof NotFoundException){
+        throw error;
+      }
+      throw new BadRequestException('Não foi possível atualizar senha ou vaultData')
+    } finally {
+      await queryRunner.release();
     }
 
-    if (updateData.senha) {
-      updateData.senha = await bcrypt.hash(updateData.senha, 10);
-    }
-
-    Object.assign(usuario, updateData);
-    return await this.usuariosRepository.save(usuario);
   }
 }
