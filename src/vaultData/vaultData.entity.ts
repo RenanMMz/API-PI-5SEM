@@ -1,5 +1,5 @@
 import { Usuario } from "src/usuarios/usuarios.entity";
-import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class VaultData {
@@ -7,7 +7,7 @@ export class VaultData {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @OneToOne(() => Usuario) // FK de usuario
+    @OneToOne(() => Usuario, {onDelete: 'CASCADE'}) // FK de usuario, 
     @JoinColumn()
     usuario: Usuario;
 
@@ -22,6 +22,5 @@ export class VaultData {
 
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     criadoEm: Date;
-    
 
 }
