@@ -57,6 +57,12 @@ export class VaultDataController {
   }
 
   @Delete()
+  @ApiOperation({ summary: 'Deletar conta do usuário e dados do cofre permanentemente',
+    description: 'Esta ação é irreversível e removerá todos os dados associados ao usuário.' })
+  @ApiResponse({ status: 200, description: 'Conta e VaultData deletados com sucesso.'
+   })
+  @ApiResponse({ status: 404, description: 'Usuário ou VaultData não encontrado.' })
+  @ApiResponse({ status: 401, description: 'Não autorizado(Token inválido ou não fornecido).' })
   async deleteAccount(@Req() req): Promise<{ message: string }> {
     const userId = req.user.id;
     await this.vaultDataService.deleteAccountAndVault(userId);
