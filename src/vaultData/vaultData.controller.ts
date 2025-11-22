@@ -16,7 +16,10 @@ import { VaultDataService } from './vaultData.service';
 import { VaultData } from './vaultData.entity';
 import { createVaultDataDTO } from './dto/createVaultData.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Vault Data')
+@ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
 @Controller('vaultdata')
 export class VaultDataController {
@@ -40,6 +43,9 @@ export class VaultDataController {
 
   //update de senhas (O cliente envia o novo blob criptografado)
   @Put()
+  @ApiOperation({ summary: 'Atualizar o cofre (Blob, IV e Tag)' })
+  @ApiResponse({ status: 200, description: 'VaultData atualizado com sucesso.' })
+  @ApiBody({ type: createVaultDataDTO })
   async updateVaultData(
     @Req() req,
     @Body() updateData: Partial<createVaultDataDTO>,
