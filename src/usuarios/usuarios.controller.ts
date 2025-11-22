@@ -21,7 +21,7 @@ export class UsuariosController {
   constructor(private usuariosService: UsuariosService) { }
 
   @Post('/create')
-  createUsuarios(@Body() createUserDTO: CreateUserDTO) {
+  async createUsuarios(@Body() createUserDTO: CreateUserDTO) {
     return this.usuariosService.createUsuarios(createUserDTO);
   }
 
