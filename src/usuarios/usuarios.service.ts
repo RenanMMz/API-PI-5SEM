@@ -12,6 +12,7 @@ import { CreateUserDTO } from './dto/usuarios.dto';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { VaultData } from 'src/vaultData/vaultData.entity';
 import { UpdateUserDTO } from './dto/updateUsuarios.dto';
+import { AuthService } from 'src/auth/auth.service';
 
 @Injectable()
 export class UsuariosService {
@@ -21,6 +22,7 @@ export class UsuariosService {
     private usuariosRepository: Repository<Usuario>,
     @InjectDataSource()
     private dataSource: DataSource,
+    private authService: AuthService
   ) { }
 
   async getUsuarios(): Promise<Usuario[]> {
@@ -68,10 +70,21 @@ export class UsuariosService {
       await queryRunner.manager.save(newVaultData);
       await queryRunner.commitTransaction();
 
+      //gera um Token JWT para logar o usuário automaticamente após a criação dele
+      const token = await this.authService.generateAccessToken(newUsuario.id)
+
       return {
-        id: newUsuario.id,
-        email: newUsuario.email,
         message: 'Usuário e Vault criados com sucesso',
+        access_token: token,
+        usuario: {
+          id: newUsuario.id,
+          email: newUsuario.email,
+        },
+        vaultData: {
+          encryptedBlob: newVaultData.encryptedBlob,
+          vaultIV: newVaultData.vaultIV,
+          vaultTag: newVaultData.vaultTag
+        }
       };
 
 
@@ -118,12 +131,12 @@ export class UsuariosService {
 
       await queryRunner.commitTransaction();
 
-    } catch (error){
+    } catch (error) {
       //rollback
       await queryRunner.rollbackTransaction()
-      console.error ('erro na transação de atualização de senha ou vaultData', error);
+      console.error('erro na transação de atualização de senha ou vaultData', error);
 
-      if (error instanceof NotFoundException){
+      if (error instanceof NotFoundException) {
         throw error;
       }
       throw new BadRequestException('Não foi possível atualizar senha ou vaultData')
