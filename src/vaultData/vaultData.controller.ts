@@ -1,17 +1,7 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Param,
-  ParseIntPipe,
-  Post,
-  Put,
-  NotFoundException,
-  UseGuards,
-  Req,
-  BadRequestException,
-  Delete,
+import {Body, Controller, Get, Param, ParseIntPipe, Post, Put, 
+  NotFoundException, UseGuards, Req, BadRequestException, Delete,
 } from '@nestjs/common';
+
 import { VaultDataService } from './vaultData.service';
 import { VaultData } from './vaultData.entity';
 import { createVaultDataDTO } from './dto/createVaultData.dto';
@@ -27,6 +17,12 @@ export class VaultDataController {
 
   //get do vaultdata (vem no login mas tá aqui também idk)
   @Get()
+  @ApiOperation({ summary: 'Obter dados do cofre' })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Dados do VaultData obtidos com sucesso.',
+    type: createVaultDataDTO 
+  })
   async getVaultData(@Req() req) {
     const userId = req.user.id;
     const vaultData = await this.vaultDataService.getVaultDataByUserId(userId);
