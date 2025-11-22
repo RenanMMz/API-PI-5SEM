@@ -7,34 +7,38 @@ import {
   Post,
   Put,
   NotFoundException,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
 import { UsuariosService } from './usuarios.service';
 import { CreateUserDTO } from './dto/usuarios.dto';
 import { Usuario } from './usuarios.entity';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { UpdateUserDTO } from './dto/updateUsuarios.dto';
 
 @Controller('usuarios')
 export class UsuariosController {
   constructor(private usuariosService: UsuariosService) { }
 
   @Post('/create')
-  createUsuarios(@Body() createUserDTO: CreateUserDTO) {
+  async createUsuarios(@Body() createUserDTO: CreateUserDTO) {
     return this.usuariosService.createUsuarios(createUserDTO);
   }
 
-  @Put('/update/:id')
+  @UseGuards(JwtAuthGuard)
+  @Put('/update')
   async updateUsuarios(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() updateData: Partial<CreateUserDTO>,
-  ) {
-    const updatedUser = await this.usuariosService.updateUsuarios(id, updateData);
-    if (!updatedUser) {
-      throw new NotFoundException(`Usuário com ID ${id} não encontrado.`);
-    }
-    return updatedUser;
+    @Req() req,
+    @Body() updateData: UpdateUserDTO,
+  ){
+    const userId = req.user.id;
+
+    await this.usuariosService.updateUser(
+      userId,
+      updateData
+    );
+
+    return { message: 'Senha e Vault atualizados com sucesso'};
   }
-  
-  @Get()
-  async getUsuarios(): Promise<Usuario[]> {
-    return this.usuariosService.getUsuarios();
-  }
+
 }

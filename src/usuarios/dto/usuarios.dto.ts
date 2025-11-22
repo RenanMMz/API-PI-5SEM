@@ -1,21 +1,16 @@
-import { ApiProperty } from "@nestjs/swagger"; // <--- Importação necessária
-import { IsNotEmpty, IsString, IsEmail } from "class-validator";
+import { ApiProperty } from "@nestjs/swagger";
+import { IsNotEmpty, IsString } from "class-validator";
+
 
 export class CreateUserDTO {
     
-    @ApiProperty({
-        description: 'Email do usuário para login',
-        example: 'teste@fatec.sp.gov.br'
-    })
+    @ApiProperty()
     @IsString()
     @IsNotEmpty()
     // @IsEmail() // Recomendado adicionar se quiser validar formato de email
     email: string;
 
-    @ApiProperty({
-        description: 'Master key hasheada (Senha mestra)',
-        example: '$2b$10$EixZaYVK1fsbw1ZfbX3OXePaWxwKc.6...'
-    })
+    @ApiProperty()
     @IsString()
     @IsNotEmpty()
     senha: string;
@@ -41,30 +36,22 @@ export class CreateUserDTO {
         example: 'a7f8e9d1c2b3a4...'
     })
 
+    @ApiProperty()
     @IsString()
     @IsNotEmpty()
     kdfSalt: string;
 
-    @ApiProperty({
-        description: 'Blob criptografado contendo todas as senhas',
-        example: 'U2FsdGVkX1+...'
-    })
+    @ApiProperty()
     @IsString()
     @IsNotEmpty()
     encryptedBlob: string;
 
-    @ApiProperty({
-        description: 'Vetor de inicialização (IV) do Vault',
-        example: 'iv123456789'
-    })
+    @ApiProperty()
     @IsString()
     @IsNotEmpty()
     vaultIV: string;
 
-    @ApiProperty({
-        description: 'Tag de autenticação do Vault (Auth Tag)',
-        example: 'tagXYZ123'
-    })
+    @ApiProperty()
     @IsString()
     @IsNotEmpty()
     vaultTag: string;

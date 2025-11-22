@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { DatabaseModule } from 'src/db/database.module';
@@ -12,7 +12,7 @@ import { UsuariosModule } from 'src/usuarios/usuarios.module';
 
 @Module({
   imports: [
-    UsuariosModule,
+    forwardRef(()=>UsuariosModule),
     TypeOrmModule.forFeature([Usuario, VaultData]),
     PassportModule,
     JwtModule.register({
