@@ -55,12 +55,8 @@ export class UsuariosService {
       const newUsuario = queryRunner.manager.create(Usuario, {
         email: createUserDTO.email,
         senha: hashedPassword,
-        nome: createUserDTO.nome,
-        tipo: createUserDTO.tipo,
         kdfSalt: createUserDTO.kdfSalt,
         criadoEm: new Date(),
-        reservas: [], 
-        cartoes: []
       });
       await queryRunner.manager.save(newUsuario);
 

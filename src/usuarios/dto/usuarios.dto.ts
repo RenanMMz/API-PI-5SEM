@@ -7,7 +7,7 @@ export class CreateUserDTO {
     @ApiProperty()
     @IsString()
     @IsNotEmpty()
-    // @IsEmail() // Recomendado adicionar se quiser validar formato de email
+    // @IsEmail() - considerarei a implementação desse decorador
     email: string;
 
     @ApiProperty()
@@ -19,17 +19,12 @@ export class CreateUserDTO {
         description: 'Master key hasheada (Senha mestra)',
         example: '$2b$10$EixZaYVK1fsbw1ZfbX3OXePaWxwKc.6...'
     })
-    @IsString()
-    @IsNotEmpty()
-    nome: string;
 
     @ApiProperty({
         description: 'Master key hasheada (Senha mestra)',
         example: '$2b$10$EixZaYVK1fsbw1ZfbX3OXePaWxwKc.6...'
     })
-    @IsString()
-    @IsNotEmpty()
-    tipo: string;
+
 
     @ApiProperty({
         description: 'KDF Salt (Plaintext chave pública do user)',

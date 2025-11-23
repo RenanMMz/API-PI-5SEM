@@ -7,10 +7,7 @@ export class Usuario {
     id: number;
 
     @Column({ unique: true })
-    email: string;
-
-    @Column()
-    nome: string;    
+    email: string; 
     
     @Column()
     senha: string;
@@ -20,15 +17,6 @@ export class Usuario {
 
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     criadoEm: Date;
-
-    @Column()
-    tipo: string;    
-   
-    @Column('simple-array')
-    reservas: string[];    
-   
-    @Column('simple-array')
-    cartoes: string[];    
     
     @OneToOne(() => VaultData, vaultData => vaultData.usuario)
     vaultData: VaultData;
