@@ -9,8 +9,16 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
+  
   dotenv.config();
+  
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+
+  if (!globalThis.crypto) {
+    globalThis.crypto = {
+      randomUUID,
+    } as Crypto;
+  }
 
   const config = new DocumentBuilder()
     .setTitle('API PI 5 SEMESTRE')
@@ -22,11 +30,6 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api-docs', app, document); // rota do Swagger: /api-docs
 
-  if (!globalThis.crypto) {
-    globalThis.crypto = {
-      randomUUID,
-    } as Crypto;
-  }
 
   app.useGlobalFilters(new AllExceptionsFilter());
   app.useGlobalPipes(new ValidationPipe({

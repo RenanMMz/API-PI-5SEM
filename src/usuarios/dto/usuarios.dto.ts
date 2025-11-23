@@ -7,31 +7,47 @@ export class CreateUserDTO {
     @ApiProperty()
     @IsString()
     @IsNotEmpty()
+    // @IsEmail() - considerarei a implementação desse decorador
     email: string;
 
     @ApiProperty()
     @IsString()
     @IsNotEmpty()
-    senha: string; // é a master key hasheada
+    senha: string;
+
+    @ApiProperty({
+        description: 'Master key hasheada (Senha mestra)',
+        example: '$2b$10$EixZaYVK1fsbw1ZfbX3OXePaWxwKc.6...'
+    })
+
+    @ApiProperty({
+        description: 'Master key hasheada (Senha mestra)',
+        example: '$2b$10$EixZaYVK1fsbw1ZfbX3OXePaWxwKc.6...'
+    })
+
+
+    @ApiProperty({
+        description: 'KDF Salt (Plaintext chave pública do user)',
+        example: 'a7f8e9d1c2b3a4...'
+    })
 
     @ApiProperty()
     @IsString()
     @IsNotEmpty()
-    kdfSalt: string; // plaintext chave pública do user
+    kdfSalt: string;
 
     @ApiProperty()
     @IsString()
     @IsNotEmpty()
-    encryptedBlob: string; // blob com todas as senhas
+    encryptedBlob: string;
 
     @ApiProperty()
     @IsString()
     @IsNotEmpty()
-    vaultIV: string; //
+    vaultIV: string;
 
     @ApiProperty()
     @IsString()
     @IsNotEmpty()
     vaultTag: string;
-
 }

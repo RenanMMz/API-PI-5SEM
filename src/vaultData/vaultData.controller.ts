@@ -1,22 +1,15 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Param,
-  ParseIntPipe,
-  Post,
-  Put,
-  NotFoundException,
-  UseGuards,
-  Req,
-  BadRequestException,
-  Delete,
+import {Body, Controller, Get, Param, ParseIntPipe, Post, Put, 
+  NotFoundException, UseGuards, Req, BadRequestException, Delete,
 } from '@nestjs/common';
+
 import { VaultDataService } from './vaultData.service';
 import { VaultData } from './vaultData.entity';
 import { createVaultDataDTO } from './dto/createVaultData.dto';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Vault Data')
+@ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
 @Controller('vaultdata')
 export class VaultDataController {
@@ -24,6 +17,12 @@ export class VaultDataController {
 
   //get do vaultdata (vem no login mas tá aqui também idk)
   @Get()
+  @ApiOperation({ summary: 'Obter dados do cofre' })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Dados do VaultData obtidos com sucesso.',
+    type: createVaultDataDTO 
+  })
   async getVaultData(@Req() req) {
     const userId = req.user.id;
     const vaultData = await this.vaultDataService.getVaultDataByUserId(userId);
@@ -40,6 +39,9 @@ export class VaultDataController {
 
   //update de senhas (O cliente envia o novo blob criptografado)
   @Put()
+  @ApiOperation({ summary: 'Atualizar o cofre (Blob, IV e Tag)' })
+  @ApiResponse({ status: 200, description: 'VaultData atualizado com sucesso.' })
+  @ApiBody({ type: createVaultDataDTO })
   async updateVaultData(
     @Req() req,
     @Body() updateData: Partial<createVaultDataDTO>,
@@ -55,6 +57,12 @@ export class VaultDataController {
   }
 
   @Delete()
+  @ApiOperation({ summary: 'Deletar conta do usuário e dados do cofre permanentemente',
+    description: 'Esta ação é irreversível e removerá todos os dados associados ao usuário.' })
+  @ApiResponse({ status: 200, description: 'Conta e VaultData deletados com sucesso.'
+   })
+  @ApiResponse({ status: 404, description: 'Usuário ou VaultData não encontrado.' })
+  @ApiResponse({ status: 401, description: 'Não autorizado(Token inválido ou não fornecido).' })
   async deleteAccount(@Req() req): Promise<{ message: string }> {
     const userId = req.user.id;
     await this.vaultDataService.deleteAccountAndVault(userId);

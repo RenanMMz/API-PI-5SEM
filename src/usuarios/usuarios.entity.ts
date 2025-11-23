@@ -1,4 +1,4 @@
-import { VaultData } from "src/vaultData/vaultData.entity";
+import { VaultData } from "../vaultData/vaultData.entity";
 import { Column, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
@@ -7,8 +7,8 @@ export class Usuario {
     id: number;
 
     @Column({ unique: true })
-    email: string;
-
+    email: string; 
+    
     @Column()
     senha: string;
 

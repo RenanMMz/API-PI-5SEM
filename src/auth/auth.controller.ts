@@ -1,15 +1,4 @@
-import {
-  Body,
-  Controller,
-  Post,
-  Res,
-  Get,
-  Req,
-  UseGuards,
-  NotFoundException,
-  BadRequestException,
-  Query,
-  Param,
+import { Body, Controller, Post, Res, Get, Req, UseGuards, NotFoundException, BadRequestException, Query, Param,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDTO } from './dto/login.dto';
@@ -17,7 +6,9 @@ import { Response, Request } from 'express';
 import { JwtService } from '@nestjs/jwt';
 import { UsuariosService } from 'src/usuarios/usuarios.service';
 import { JwtAuthGuard } from './jwt-auth.guard';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -61,6 +52,10 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Post('refresh')
+  @ApiBearerAuth()         // <--- OBRIGATÓRIO: Avisa o Swagger para enviar o Token
+  @ApiOperation({ summary: 'Renovar o Token de Acesso (Requer Token atual válido)' })
+  @ApiResponse({ status: 200, description: 'Novo token gerado.' })
+  @ApiResponse({ status: 401, description: 'Token inválido ou expirado.' })
   async refreshToken(@Req() req) {
     const userId = req.user.id;
     const newToken = await this.authService.generateAccessToken(userId);
