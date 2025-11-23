@@ -1,5 +1,3 @@
-import * as crypto from 'crypto'; //incluída linha para corrigir erro de "crypto" no NestJS
-global.crypto = crypto as any; //incluída linha para corrigir erro de "crypto" no NestJS
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from './app.module';
